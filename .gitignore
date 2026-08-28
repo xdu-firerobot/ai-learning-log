@@ -1,0 +1,10 @@
+# 密钥/环境配置
+.env
+
+# Python 缓存
+__pycache__/
+*.pyc
+
+# 系统/编辑器
+.DS_Store
+Thumbs.db
