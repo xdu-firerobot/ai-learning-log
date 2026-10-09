@@ -1,5 +1,6 @@
 import json
 from call_llm import chat_json
+from reviewer import review_sms   # 文件顶部加这行 import
 
 SYSTEM_PROMPT = """你是一名合规的消费金融/贷款营销短信文案专家。
 
@@ -77,11 +78,26 @@ def batch_generate(products):
         results.append(generate_sms(**p))
     return results
 
+def pipeline(product, amount, term, selling_point, target):
+    info = {"product": product, "amount": amount, "term": term,
+            "selling_point": selling_point, "target": target}
+    sms = generate_sms(**info)
+    # 第一关：生成方自己判不合规 → 直接驳回
+    if not sms.get("compliant"):
+        return {"final": "reject", "stage": "generate", "reason": sms.get("risk_reason")}
+    # 第二关：送独立审稿人
+    review = review_sms(info, sms)
+    if review is None:
+        return {"final": "error", "reason": "审稿调用失败"}
+    if review.get("pass"):
+        return {"final": "approve", "sms": sms, "review": review}
+    return {"final": "reject", "stage": "review", "reason": review.get("issues")}
+
 if __name__ == "__main__":
     samples = [
         {"product":"极速贷","amount":"最高20万","term":"3-12期","selling_point":"随借随还","target":"上班族"},
         {"product":"生意金","amount":"最高50万","term":"6-24期","selling_point":"商户专属","target":"小微店主"},
         {"product":"速通花","amount":"不限","term":"灵活","selling_point":"黑户也能下","target":"征信差人群"},
     ]
-    for r in batch_generate(samples):
-        print(r)
+    for s in samples:
+        print(pipeline(**s))
