@@ -7,6 +7,9 @@ Day12 项目②：本地 RAG 知识库（数据不出本机）
 - 生成/回答：DeepSeek（call_llm.chat，你已会调）
 """
 import os
+# 国内直连 huggingface.co 会超时(WinError 10060)，改走镜像站
+# 注意：必须在 import sentence_transformers 之前设置才生效
+os.environ.setdefault("HF_ENDPOINT", "https://hf-mirror.com")
 import numpy as np
 from sentence_transformers import SentenceTransformer
 from call_llm import chat
