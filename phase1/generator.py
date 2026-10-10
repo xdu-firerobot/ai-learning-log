@@ -91,7 +91,9 @@ def pipeline(product, amount, term, selling_point, target):
         return {"final": "error", "reason": "审稿调用失败"}
     if review.get("pass"):
         return {"final": "approve", "sms": sms, "review": review}
-    return {"final": "reject", "stage": "review", "reason": review.get("issues")}
+    return {"final": "reject", "stage": "review",
+            "reason": review.get("issues"),
+            "suggestion": review.get("suggestion", "")}
 
 if __name__ == "__main__":
     samples = [
