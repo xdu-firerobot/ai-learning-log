@@ -20,6 +20,9 @@
     ├── call_llm.py      # 地基：chat / chat_json / chat_stream / Conversation
     ├── generator.py     # 生成器 + 黑名单 + pipeline() 三关串联
     ├── reviewer.py      # 独立审稿人：review_sms()
+    ├── kb_compliance.txt # 知识库：合规条款摘编（RAG 用）
+    ├── rag.py           # Day12 RAG：切分/向量化/检索/生成
+    ├── rag_cli.py       # Day13 交互助手：索引持久化 + 命令行问答
     └── README.md        # 本文件
 
 ## 运行
@@ -53,3 +56,21 @@ pipeline 终审结论：
 
 - 审稿质量依赖 prompt 调优，极端样本仍需人工复核。
 - 下一步：接向量库做 RAG（合同条款检索）、批量从 CSV 读产品并导出审核台账。
+
+## 项目②：本地 RAG 合规知识库（Day12 + Day13）
+
+检索在本地 bge 模型完成（数据不出本机），生成交给 DeepSeek。流程：
+切分 → 向量化建索引 → 提问向量化 → 余弦相似取 top_k → 拼 prompt 生成。
+
+文件：
+- `rag.py`：核心函数 `chunk_text / build_index / retrieve / answer / get_embedder`。
+  `python phase1/rag.py` 跑内置 3 题示例。
+- `rag_cli.py`：在 rag.py 基础上加「索引持久化 + 交互循环」。`python phase1/rag_cli.py`
+  进入命令行问答（输入 exit/quit 退出）。
+
+索引缓存：`kb_index.cache`（pickle，含块文本+向量）。知识库未改时启动秒加载；
+改了 `kb_compliance.txt` 会自动重建。该缓存文件已被 `.gitignore` 忽略。
+
+关键概念：
+- RAG = 给模型临时喂资料（in-context），**不改模型权重**；与微调（fine-tuning）本质不同。
+- `top_k=3` 指取 3「块」上下文，每块 200 字（含 overlap 防断句），非 3 条条款。

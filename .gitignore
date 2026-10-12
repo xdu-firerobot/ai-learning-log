@@ -11,3 +11,6 @@ Thumbs.db
 
 # 个人学习笔记（不进仓库）
 笔记_personal.md
+
+# RAG 索引缓存（本地构建产物）
+*.cache
