@@ -111,3 +111,24 @@
 - [ ] Phase 4：至少 1 个项目部署上线可访问
 - [ ] 3 个项目 README 写完，作品集成型
 - [ ] 简历改版完成，投出第一批岗位
+
+---
+
+## 实际进度（截至 Day 14，2026-10-12）
+> 本小节为执行跟踪，计划原文见上。代码仓库：ai-learning-log。
+
+| Day | 内容 | 对应计划 | 产出文件 |
+|---|---|---|---|
+| Day 1-7 | API 跑通、参数、system prompt、JSON、few-shot、GitHub | Phase 0 + Phase 1 学习期 | call_llm.py 地基 |
+| Day 8-11 | 贷款短信合规生成器：生成器 + 审稿人三关防线 | 项目① 营销文案生成器（范围更大，含合规） | generator.py / reviewer.py |
+| Day 12 | 本地 RAG：bge 检索 + DeepSeek 生成 | Phase 2 wk10 Embedding + wk13 雏形 | rag.py / kb_compliance.txt |
+| Day 13 | RAG 交互助手：索引持久化(pickle) + 命令行问答 | Phase 2 进阶 | rag_cli.py |
+| Day 14 | 补缺口：Chroma 向量库 + PDF(pypdf)解析 + 回答带引用来源 | Phase 2 wk11/wk12/wk13 补齐 | rag_chroma.py / make_sample_pdf.py / sample_policy.pdf |
+
+**缺口补齐情况**：
+- ✅ Chroma：用 `chromadb.PersistentClient` 落盘 `phase1/chroma_db/`，取代 numpy 内存矩阵
+- ✅ PDF 解析：pypdf 读中文 PDF 正常（已验证 sample_policy.pdf）
+- ✅ 引用来源：检索块带 `source/chunk_idx` 元数据，回答末尾自动标注出处
+- ⏭️ 下一步：进项目②（wk14-17 小贷政策知识库问答）——收集 10+ 篇真实监管文件语料，换入 kb，跑切分对比实验
+
+**纪律遵守**：每周有提交（无 ahead 断点）；卡住即查文档/重试，未陷入"再学一门课"。
