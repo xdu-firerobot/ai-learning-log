@@ -66,6 +66,7 @@ def answer(query, chunks, index, top_k=3):
         f"【知识库内容】\n{context}\n\n"
         f"【问题】{query}"
     )
+    print(prompt)
     return chat([{"role": "user", "content": prompt}])
 
 # ---------- 6. 装载知识库并建索引 ----------
