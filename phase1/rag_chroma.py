@@ -35,6 +35,10 @@ class BGEEmbeddingFunction:
     """Chroma 的 embedding 函数：文档入库用标准 doc 编码（不加 query 前缀）。
     查询时由 retrieve() 单独带前缀编码，保证 bge 检索质量。"""
 
+    def name(self) -> str:
+        """Chroma 新版 get_or_create 要求：返回 embedding 函数的唯一标识名。"""
+        return "bge-small-zh-v1.5"
+
     def __call__(self, input):
         # input: list[str]
         vecs = _get_embedder().encode(list(input), normalize_embeddings=True)

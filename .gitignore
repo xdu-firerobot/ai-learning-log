@@ -15,5 +15,5 @@ Thumbs.db
 # RAG 索引缓存（本地构建产物）
 *.cache
 
-# Chroma 向量库持久化目录（运行时生成，含向量索引）
-chroma_db/
+# Chroma 向量库持久化目录（运行时生成，含向量索引；policy_kb 会生成 chroma_policy/ 等）
+chroma_*/
