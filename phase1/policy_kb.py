@@ -21,7 +21,7 @@ sys.path.insert(0, _BASE)
 import chromadb
 import rag
 import rag_chroma as rc
-from call_llm import chat
+from call_llm import chat, chat_stream
 
 DOCS_DIR = os.path.join(_BASE, "policy_docs")
 PERSIST = os.path.join(_BASE, "chroma_policy")
@@ -80,7 +80,7 @@ def build_incremental(rebuild=False):
     return coll, coll.count(), added
 
 
-def answer(query, coll, top_k=3, debug=False):
+def answer(query, coll, top_k=3, debug=False, stream=False):
     hits = rc.retrieve(coll, query, top_k)
     ctx = "\n\n".join(
         f"[资料{i+1}]（来源：{h['source']} 块#{h['chunk_idx']}）\n{h['content']}"
@@ -96,7 +96,12 @@ def answer(query, coll, top_k=3, debug=False):
     if debug:
         print("=== PROMPT ===\n", prompt, "\n=== END ===")
 
-    reply = chat([{"role": "user", "content": prompt}])
+    if stream:
+        print("答：", end="", flush=True)          # 先打个前缀
+        chat_stream([{"role": "user", "content": prompt}])  # 逐字流出
+        reply = ""                                  # 流式拿不到文本
+    else:
+        reply = chat([{"role": "user", "content": prompt}])
 
     best = hits[0]["distance"] if hits else 99
     if best > FALLBACK_DIST or "知识库未提及" in reply:
@@ -161,7 +166,7 @@ if __name__ == "__main__":
     for q in qs:
         print("\n" + "=" * 60)
         print(">>> 问：", q)
-        print(answer(q, coll))
+        print(answer(q, coll, stream=True))
 
     print("\n" + "=" * 60)
     print(">>> 切分对比实验（200 字 vs 400 字块）")
